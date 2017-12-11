@@ -81,8 +81,102 @@ The `x -> x` function is known as the `Identity` function, so if you import `imp
                 .flatMap(identity()) 
                 .ifPresent(steve -> System.out.println("Hello " + steve));
 ```
-So that's like... the most boring case ever. Hurray, we can unwrap. But why is this useful?
 
-Well...
+If you're still scratching your head, try to make a 10th level Steve. Recognizing the pattern will make it click for you!
 
-# 
+# Step 2: Can we make this useful?
+
+So just being able to arbitrarily wrap and unwrap a value is pretty boring. So let's try to lookup steve in the Database, find his Job, and the Salary of his job.
+
+Let's say you've got to find out what Steve's salary is, and someone has implemented a Database that has the following functions:
+
+```Java
+public Optional<String> findSteve();
+public Optional<String> findJob(String person);
+public Optional<Double> findSalary(String job);
+```
+
+That is to say:
+```Java
+Optional<String> maybeSteve = database.findSteve();
+```
+might return `Optional.of("Steve")`, or we might get `Optional.empty()` back from that call.
+```Java
+Optional<String> maybeJob = database.findJob("Steve");
+```
+might return `Optional.of("Programmer")`, or we might get `Optional.empty()` back from that call
+
+```
+Optional<Double> maybeSalary = database.findSalary("Programmer")
+```
+might return `Optional.of(1000.00)`, or we might get `Optional.empty()` back from that call.
+
+We don't really want to keep checking for presence and that stuff.
+```Java
+Optional<String> maybeSteve = database.findSteve();
+    if (maybeSteve.isPresent()) {
+    Optional<String> maybeJob = database.findJob("Steve");
+    if (mayeJob.isPresent()) {
+        String job = maybeJob.get();
+        Optional<Double> maybeSalary = database.findSalary(job);
+        if (maybeSalary.isPresent()) {
+            Double salary = maybeSalary.get();
+            System.out.println("Salary: " + salary);
+        }
+    }
+}
+```
+That's pretty ugly, isn't it? Yuck. No thanks. Let's use `.flatMap` to make this a thing of beauty
+
+```Java
+database.findSteve()
+    .flatMap(name -> database.findJob(name))
+    .flatMap(job -> database.findSalary(job)
+    .ifPresent(salary -> System.out.println("Salary: " + salary));
+```
+From top to bottom, this reads something like this:
+* Find steve
+* pass the inner string of `Optional.of("steve")` to the `.flatMap`
+  * call `database.findJob("steve")`, which will return `Optional.of("programmer")`
+  * `.flatMap` "flattens" the the Optional so we're now working on that `Optional.of("programmer")` instead of `Optional.of("Steve")`
+* pass the inner value of `Optional.of("programmer")` to the next `.flatMap`
+  * call `database.findSalary("programmer")`, which will return `Optional.of(1000.00)`
+  * `.flatMap` flattens the Optional so we're now working on that `Optional.of(1000.00)`
+* pass the inner value of `Optional.of(1000.00)` to System.out.println("Salary: " + 1000.00)
+
+Do you note the exciting thing here? We went from an `Optional<String>` to an `Optional<Double>` without any hassle. That's because `.flatMap` flattened to a Double instead of String. 
+
+Let's now say you want to get Steve's YEARLY salary, where:
+  * If the salary isn't positive, we want to not return anything, that is: `Optional.empty()`
+  * If the salary is positive, we want to multiply the salary by 12 and add 500 in bonus.
+  * Also: We want it as a Integer instead of a Double. 
+  
+So, let's implement another step in a `.flatMap`. You could easily rewrite this to a nicer form using some of the other methods on the Optional (for instance .filter and .map), but for the purpose of learning `.flatMap`, it might look something like this:
+
+
+```Java
+
+database.findSteve()
+    .flatMap(name -> database.findJob(name))
+    .flatMap(job -> database.findSalary(job)
+    .flatMap(salary -> {
+        if (salary < 0)  {
+            return Optional.empty();
+        } else {
+            Integer yearly = (int) (salary * 12 + 500);
+            return Optional.of(yearly);
+        {
+    })
+    .ifPresent(salary -> System.out.println("Salary: " + salary));
+```
+
+To make it nicer, extract the righthand side to a method, and it might look something like this:
+
+```Java
+database.findSteve()
+    .flatMap(name -> database.findJob(name))
+    .flatMap(job -> database.findSalary(job)
+    .flatMap(salary -> this.calculateYearlySalary(salary))
+    .ifPresent(salary -> System.out.println("Salary: " + salary));
+```
+Maybe this `.flatMap` business is pretty nifty after all, wouldn't you say?
