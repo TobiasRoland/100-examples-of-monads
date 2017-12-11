@@ -179,4 +179,19 @@ database.findSteve()
     .flatMap(salary -> this.calculateYearlySalary(salary))
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
-Maybe this `.flatMap` business is pretty nifty after all, wouldn't you say?
+
+## Step 3: You now understand flatMap. 
+With `.flatMap` you're `Applying a function that returns a wrapped value, to a wrapped value`. Say it with me. `Applying a function that returns a wrapped value, to a wrapped value`. Again!
+
+No? Well think back to the examples you just did. Let's restate that sentence:
+> When I use `.flatMap` on an Optional, I am using a function (findJob, findSalary, calculateYearlySalary) that returns an `Optional`, to a value that's unwrapped FROM an Optional. If the original Optional I call `.flatMap` on is `empty` I don't do anything.
+
+That's the magic! If the optional is empty, .flatMap doesn't do anything! It just returns another empty Optional!
+
+```
+Optional.empty()
+    .flatMap(name -> database.findJob(name)) // doesn't do anything
+    .flatMap(job -> database.findSalary(job) // doesn't do anything
+    .flatMap(salary -> this.calculateYearlySalary(salary)) // doesn't do anything
+    .ifPresent(salary -> System.out.println("Salary: " + salary)); // it's not present because noone did anything
+```
