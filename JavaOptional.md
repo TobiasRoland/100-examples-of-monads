@@ -136,13 +136,13 @@ database.findSteve()
 ```
 From top to bottom, this reads something like this:
 * Find steve
-* pass the inner string of `Optional.of("steve")` to the `.flatMap`
+* pass "steve" from `Optional.of("steve")` to the `.flatMap`
   * call `database.findJob("steve")`, which will return `Optional.of("programmer")`
   * `.flatMap` "flattens" the the Optional so we're now working on that `Optional.of("programmer")` instead of `Optional.of("Steve")`
-* pass the inner value of `Optional.of("programmer")` to the next `.flatMap`
+* pass "programmer" from `Optional.of("programmer")` to the next `.flatMap`
   * call `database.findSalary("programmer")`, which will return `Optional.of(1000.00)`
   * `.flatMap` flattens the Optional so we're now working on that `Optional.of(1000.00)`
-* pass the inner value of `Optional.of(1000.00)` to System.out.println("Salary: " + 1000.00)
+* pass 1000.00 from `Optional.of(1000.00)` to `System.out.println("Salary: " + 1000.00)`
 
 Do you note the exciting thing here? We went from an `Optional<String>` to an `Optional<Double>` without any hassle. That's because `.flatMap` flattened to a Double instead of String. 
 
