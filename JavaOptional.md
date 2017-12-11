@@ -165,7 +165,7 @@ database.findSteve()
         } else {
             Integer yearly = (int) (salary * 12 + 500);
             return Optional.of(yearly);
-        {
+        }
     })
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
