@@ -1,12 +1,25 @@
 # What you have to know to use Java's version of the Optional
 
-**Optional** of String
 
-* parameterized type: `Optional<String>`
-* unit: `Optional.of(...)`
-* bind: `Optional.flatMap(...)`
+**Why is this a monad?**
+* a parameterized type: `Optional<String>`
+* a unit: `Optional.of(...)`
+* a bind: `Optional.flatMap(...)`
+* some theory stuff we don't care about. 
 
-So what does bind do? Well... it "unwraps". The simplest, if a little silly, case to show this would be:
+Let's work on a simple **Optional** of String
+
+## Step 0: Understand how it's created
+You use the `Optional`'s unit function to wrap your value. So in this case... Let's wrap "Steve":
+
+```Java
+Optional<String> steveWrapped = Optional.of("Steve");
+```
+
+
+## Step 1: Understand how it Flattens:
+
+Bind is flatmap. When you hear bind, think flatMap. OK? Ok. By flatten, we mean "unwraps". The simplest, if a little silly, case to show this would be:
 To wrap and unwrap a 4th level steve:
 
 ```Java
@@ -30,9 +43,9 @@ To wrap and unwrap a 4th level steve:
 
 ```
 
-Do you see how we're going from `{{{{"Steve"}}}}` to `"steve"`? 
+Do you see how we're going from `{{{{Steve}}}}` to printing `Hello Steve`? 
 
-* `{{{{steve}}}}` is flattened to `{{{"Steve"}}}` is flattened to `{{"Steve"}}` is flattened to `{"Steve"}`, which is then printed
+* `{{{{Steve}}}}` is flattened to `{{{Steve}}}` is flattened to `{{Steve}}` is flattened to `{Steve}`... and then we ask `{Steve}` to print itself if it's present. Don't worry if you didn't get that, keep reading.
 
 
 `flatMap`'s argument is a function that gets the inner value of the optional. In this example we just return it without doing anything else.
@@ -50,8 +63,10 @@ We could rewrite the above as:
             System.out.print("Hello " + steve);
         }
 ```
+And if you look at the left-hand side for the types, it's clear that we've unwrapped. Right? Because `.flatMap` unwraps!
 
-You'll note that the arguments for all the `.flatMap`'s functions are identical:
+
+You'll note that the arguments for all the `.flatMap`'s look like they're basically this:
 
 ```Java
         Optional<Optional<Optional<String>>> threeLayerSteve = fourLayerSteve.flatMap(x -> x);
@@ -66,3 +81,8 @@ The `x -> x` function is known as the `Identity` function, so if you import `imp
                 .flatMap(identity()) 
                 .ifPresent(steve -> System.out.println("Hello " + steve));
 ```
+So that's like... the most boring case ever. Hurray, we can unwrap. But why is this useful?
+
+Well...
+
+# 
