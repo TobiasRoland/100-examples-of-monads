@@ -265,7 +265,8 @@ This is just a bit of extra stuff about Streams in Java, it's not required at al
 but it IS important to understand if you want to use Streams in practice.
 
 * NUMBER ONE: You can only use a Stream once. If you try to use it again, everything will break. Just don't.
-* NUMBER TWO: Streams are only evaluated once you call specific methods on them.
+* NUMBER TWO: Streams are only evaluated once you call specific methods on them. 
+ You should look these up before using streams.
 * NUMBER THREE: Use them only for transformations, filterings and reductions.
 Do not modify the objects you're working on... even if it seems like a good idea at the time.
 
