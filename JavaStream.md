@@ -185,7 +185,7 @@ friends.forEach(number -> System.out.println("Number: " + number));
 
 Alright. That was pretty easy wasn't it? And we even changed the type of the stream from
 `Stream<String>` to `Stream<Integer>`. Now... let's say that we don't have a DataBase, but instead
-someone went ahead and modeled all of these things for us as Objects as Strings.
+someone went ahead and modeled all of these things for us as classes that look sort of like this:
 
 ```
 public class Parent {
