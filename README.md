@@ -23,7 +23,7 @@ looking back at the definitions becomes much easier!
 
 * You **shouldn't** have to be a CompSci major to use functional programming
 * You **shouldn't** need to know math to understand the implications of `flatMap`
-* You **shouldn't** have to learn a fistfull of new weird operators such as `>>=`, `<$>` and `<$>` to make use of monads. (Although hopefully at the end you'll want to!)
+* You **shouldn't** have to learn a fistfull of new weird operators such as `>>=`, `<$>` and `<*>` to make use of monads. (Although hopefully at the end you'll want to!)
 * You **shouldn't** need to be told to learn to read Haskell type syntax just to undetstand what a Monad is.
 
 This will hopefully be a collection of uses of Monads that will teach you through copious examples. 
