@@ -32,3 +32,7 @@ This will hopefully be a collection of uses of Monads that will teach you throug
 ... to have at least 100 super-straight forward examples of Monads in action, each example hopefully rewritten in multiple 
 forms and (if time and enthusiasm permits) multiple languages!
 
+
+**IN PROGRESS:**
+[Java Optional](JavaOptional.md) (80% done)
+[Java Stream](JavaStream.md) (70% done)
