@@ -131,7 +131,7 @@ That's pretty ugly, isn't it? Yuck. No thanks. Let's use `.flatMap` to make this
 ```Java
 database.findSteve()
     .flatMap(name -> database.findJob(name))
-    .flatMap(job -> database.findSalary(job)
+    .flatMap(job -> database.findSalary(job))
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
 From top to bottom, this reads something like this:
@@ -158,7 +158,7 @@ So, let's implement another step in a `.flatMap`. You could easily rewrite this 
 
 database.findSteve()
     .flatMap(name -> database.findJob(name))
-    .flatMap(job -> database.findSalary(job)
+    .flatMap(job -> database.findSalary(job))
     .flatMap(salary -> {
         if (salary < 0)  {
             return Optional.empty();
@@ -175,12 +175,12 @@ To make it nicer, extract the righthand side to a method, and it might look some
 ```Java
 database.findSteve()
     .flatMap(name -> database.findJob(name))
-    .flatMap(job -> database.findSalary(job)
+    .flatMap(job -> database.findSalary(job))
     .flatMap(salary -> this.calculateYearlySalary(salary))
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
 
-## Step 3: You now understand flatMap. 
+## Step 3: flatMap applies applies a function that returns a wrapped value to the original wrapped value 
 With `.flatMap` you're `Applying a function that returns a wrapped value, to a wrapped value`. Say it with me. `Applying a function that returns a wrapped value, to a wrapped value`. Again!
 
 No? Well think back to the examples you just did. Let's restate that sentence:
