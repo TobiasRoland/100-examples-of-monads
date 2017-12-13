@@ -172,4 +172,103 @@ If you aren't feeling this example, I strongly encourage you to add another laye
 
 Now we find out that we actually wants to print all the favourite numbers for the friends. Thankfully, it turns out that our database also contains a method `public Stream<Integer> getFavouriteNumbers(String friendsName)`.
 
-...
+so adding that to our solution, all we need to do is add another flatmap:
+
+```Java
+Stream<String> parents = database.getSteveAndIda();
+Stream<String> kids = parents.flatMap(parent -> database.getKids(parent));
+Stream<String> friends = kids.flatMap(kid -> database.getFriends(kid));
+Stream<Integer> favouriteNumbers = friends.flatMap(friend -> database.getFavouriteNumbers(friends));
+friends.forEach(number -> System.out.println("Number: " + number));
+```
+
+Alright. That was pretty easy wasn't it? And we even changed the type of the stream from
+`Stream<String>` to `Stream<Integer>`. Now... let's say that we don't have a DataBase, but instead
+someone went ahead and modeled all of these things for us as Objects as Strings.
+
+```
+public class Parent {
+    public Stream<Kid> getKids();
+    public String getName();
+}
+
+public class Kid {
+    public Stream<Friend> getFriends();
+    public String getName();
+}
+
+public class Friend {
+    public Stream<Integer> getFavouriteNumbers();
+    public String getName();
+}
+```
+
+
+```Java
+Stream<Parent> parents = lookupParents();
+Stream<Kid> kids = parents.flatMap(parent -> parent.getKids());
+Stream<Friend> friends = kids.flatMap(kid -> kid.getFriends());
+Stream<Integer> numbers = friends.flatMap(friend -> friend.getFavouriteNumbers());
+numbers.forEach(number -> System.out.printLn("No: " + number));
+```
+
+See how we're unwrapping the Streams bit by bit, "flattening" them out. The `.flatMap` takes a function that 
+operates on the internal value of each of the previous stream's elements. That sentence is a mouthful,
+so let's implement a method that returns a stream of Characters of a String.
+
+we'll start by doing this inline:
+```Java
+Stream<Parent> parents = lookupParents();
+Stream<Kid> kids = parents.flatMap(parent -> parent.getKids());
+Stream<Friend> friends = kids.flatMap(kid -> kid.getFriends());
+Stream<Character> characters = friends.flatMap(friend -> {
+    // chars returns a Stream of integers, but we want Chars.
+    // Therefore, we use the function on the int stream .mapToObj
+    String name = friend.getName();
+    return name.chars().mapToOb(charNumber -> (char) charNumber);
+});
+```
+Note that we've now written a function for `.flatMap` that takes a `Friend` as an argument, and returns a `Stream<Character>` If you extract it to a method, it'll look something like this:
+
+```Java
+public Stream<Character> convertFriendToChars(Friend friend) {
+    return name.chars().mapToObj(charNumber -> (char) charNumber);
+}
+```
+
+and then we can write something like this - behold!
+
+```Java
+Stream<Parent> parents = lookupParents();
+Stream<Kid> kids = parents.flatMap(parent -> parent.getKids());
+Stream<Friend> friends = kids.flatMap(kid -> kid.getFriends());
+Stream<Character> characters = friends.flatMap(friend -> this.convertFriendToChars(friend));
+characters.forEach(character -> System.out.printLn("char: " + character));
+```
+That's pretty much it for `.flatMap`. As a convenience, we can use a differnet syntax to avoid having to
+write out `flatMap(parameter -> parameter.getSomeValue())`. This: `.flatMap(Parameter::getSomeValue)`
+is just as good, if not better! If you do that and chain your calls, we can make the above look pretty
+consise, but note that we're NOT loosing any information - all the information is still here, just less
+verbose. Most people come to like this way of writing it after using streams:
+
+```
+lookupParents
+    .flatMap(Parent::getKids)
+    .flatMap(Kid::getFriends)
+    .flatMap(this::convertFriendToChars)
+    .forEach(character -> System.out.println("char: " + character))
+```
+
+
+## Step 4: Bonus about streams that's not strictly necessary to understand Monads
+This is just a bit of extra stuff about Streams in Java, it's not required at all to understand that concept, 
+but it IS important to understand if you want to use Streams in practice.
+
+* NUMBER ONE: You can only use a Stream once. If you try to use it again, everything will break. Just don't.
+* NUMBER TWO: Streams are only evaluated once you call specific methods on them.
+* NUMBER THREE: Use them only for transformations, filterings and reductions.
+Do not modify the objects you're working on... even if it seems like a good idea at the time.
+
+If you're breaking any of these rules, please make sure you've read the entirety of 
+the Javadocs of the Stream-API and are aware of the implications as there's a high likelihood you
+should be acomplishing what you're trying to accomplish in a more intended way.
