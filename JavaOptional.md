@@ -180,6 +180,18 @@ database.findSteve()
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
 
+To make it even EVEN nicer, we can use method reference syntax. As a rule of thumb, you can replace an explicit lambda expression with a method reference (`::`) whenever the righthand and lefthand side of `->` both only have one argument. 
+
+```
+database.findSteve()
+    .flatMap(database::findJob)
+    .flatMap(database::findSalary)
+    .flatMap(this::calculateYear)
+    .ifPresent(salary -> System.out.println("Salary: " + salary));
+```
+
+It's mostly a matter of preference. I personally favor the `::` syntax almost every chance I get. 
+
 ## Step 3: flatMap applies applies a function that returns a wrapped value to the original wrapped value 
 With `.flatMap` you're `Applying a function that returns a wrapped value, to a wrapped value`. Say it with me. `Applying a function that returns a wrapped value, to a wrapped value`. Again!
 
