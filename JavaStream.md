@@ -229,11 +229,16 @@ Stream<Character> characters = friends.flatMap(friend -> {
     return name.chars().mapToOb(charNumber -> (char) charNumber);
 });
 ```
-Note that we've now written a function for `.flatMap` that takes a `Friend` as an argument, and returns a `Stream<Character>` If you extract it to a method, it'll look something like this:
+Note that we've now written a function for `.flatMap` that takes a `Friend` as an argument, and returns a `Stream<Character>` If you extract it to a method and maybe sprinkle in a little null-check, it'll look something like this:
 
 ```Java
 public Stream<Character> convertFriendToChars(Friend friend) {
-    return name.chars().mapToObj(charNumber -> (char) charNumber);
+    String name = friend.getName();
+    if (name == null) {
+        return Stream.empty()
+    } else {
+        return name.chars().mapToObj(charNumber -> (char) charNumber);
+    }
 }
 ```
 
