@@ -180,7 +180,7 @@ database.findSteve()
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
 
-To make it even EVEN nicer, we can use method reference syntax. As a rule of thumb, you can replace an explicit lambda expression with a method reference (`::`) whenever the righthand and lefthand side of `->` both only have one argument. 
+To make it even EVEN nicer, we can use method reference syntax. As a rule of thumb, you can replace an explicit lambda expression with a method reference (`::`) whenever the lefthand side of `->` only takes one argument.
 
 ```
 database.findSteve()
@@ -190,7 +190,7 @@ database.findSteve()
     .ifPresent(salary -> System.out.println("Salary: " + salary));
 ```
 
-It's mostly a matter of preference. I personally favor the `::` syntax almost every chance I get. 
+It's (mostly) a matter of preference. I personally favor the `::` syntax over the lambda syntax. 
 
 ## Step 3: flatMap applies applies a function that returns a wrapped value to the original wrapped value 
 With `.flatMap` you're `Applying a function that returns a wrapped value, to a wrapped value`. Say it with me. `Applying a function that returns a wrapped value, to a wrapped value`. Again!
