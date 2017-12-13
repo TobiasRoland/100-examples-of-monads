@@ -49,9 +49,9 @@ If we rewrite that last bit by assigning each flatMapping to a variable, you can
 
 ```Java
 Stream<Stream<Stream<Stream<String>>>> fourthLevel = ...;
-Stream<Stream<Stream<String>>> thirdLevel = fourthLevel.flatMap(x -> x);
-Stream<Stream<String>> secondLevel = thirdLevel.flatMap(x -> x);
-Stream<String> firstLevel = secondLevel.flatMap(x -> x);
+Stream<Stream<Stream<String>>> thirdLevel = fourthLevel.flatMap(thirdLvl -> thirdLvl);
+Stream<Stream<String>> secondLevel = thirdLevel.flatMap(secondLvl -> secondLvl);
+Stream<String> firstLevel = secondLevel.flatMap(firstLvl -> firstLvl);
 firstLevel.forEach(person -> System.out.println(person));
 ```
 Notice we've gone from `{{{{Steve,Ida}}}}` to `{{{Steve,Ida}}}` to `{{Steve,Ida}}` to `{Steve,Ida}`, 
