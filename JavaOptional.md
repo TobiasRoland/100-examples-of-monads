@@ -48,8 +48,7 @@ Do you see how we're going from `{{{{Steve}}}}` to printing `Hello Steve`?
 * `{{{{Steve}}}}` is flattened to `{{{Steve}}}` is flattened to `{{Steve}}` is flattened to `{Steve}`... and then we ask `{Steve}` to print itself if it's present. Don't worry if you didn't get that, keep reading.
 
 
-`flatMap`'s argument is a function that gets the inner value of the optional. In this example we just return it without doing anything else.
-`flatMap` then unwraps that inner value by one level.
+`flatMap`'s argument is a function that takes the inner value of the Optional you're calling `.flatMap` on. In this example we just return it without doing anything else; `flatMap` then unwraps that inner value by one level.
 
 We could rewrite the above as:
 ```Java
@@ -64,7 +63,6 @@ We could rewrite the above as:
         }
 ```
 And if you look at the left-hand side for the types, it's clear that we've unwrapped. Right? Because `.flatMap` unwraps!
-
 
 You'll note that the arguments for all the `.flatMap`'s look like they're basically this:
 
