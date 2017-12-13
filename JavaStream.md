@@ -62,7 +62,8 @@ anything interesting with that value and just return it. We just let `.flatMap` 
 
 Yeah, again, on it's own... big whoop. We can wrap and unwrap. So what's the point?
 
-## Step 2: Making .flatMap useful
+## Step 2: Making flatMap useful
+
 Let's say Steve and Ida both have several kids, and they want to make a list of all their Children's friends.
 
 So we have a database with the following methods:
@@ -106,7 +107,69 @@ database.getSteveAndIda()
     .flatMap(kid -> database.getFriends(kid))
     .forEach(friend -> System.out.println(friend));
 ```
-That's pretty neat. Note how we don't have any variable called "kids" - that's because the `flatMap` unwraps the
-individual values of the Stream you're calling `.flatMap` on "automatically" and gets each of the internal values.
+That's pretty neat. Note how we don't have any variable called `kids` or `friends` now - that's because the `flatMap` unwraps the individual values of the Stream you're calling `.flatMap` on "automatically" is unwrapped, and each 
+of the internal values are then passed to the function.
 
+Alright that might make your head hurt. Let's try and assign to variables instead of chaining the flatMaps and
+see if it becomes more apparent what's happening:
 
+```Java
+Stream<String> parents = database.getSteveAndIda();
+Stream<String> kids = parents.flatMap(parent -> database.getKids(parent));
+Stream<String> friends = kids.flatMap(kid -> database.getFriends(kid));
+friends.forEach(friend -> System.out.println(friend));
+```
+See? The flatMap "flattens" out the nested Streams! If you imagine a structure like this:
+
+```Json
+{
+  "parents": [
+    {
+      "name": "Steve",
+      "kids": [
+        {
+          "name": "Tina",
+          "friends": [
+            "Uma",
+            "Usain"
+          ]
+        },
+        {
+          "name": "Toby",
+          "friends": [
+            "Uhura"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ida",
+      "kids": [
+        {
+          "name": "James",
+          "friends": [
+            "Karl",
+            "Kora"
+          ]
+        },
+        {
+          "name": "Joyce",
+          "friends": [
+            "Kamil"
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+, then at each step we have essentially "combined" (I loosely use this expression) first all the parents' kids into
+one stream, and then "combined" all the parents' kids' friends into one stream.
+
+If you aren't feeling this example, I strongly encourage you to add another layer of nesting (say each friend has a pet, perhaps).
+
+--
+
+Now we find out that we actually wants to print all the favourite numbers for the friends. Thankfully, it turns out that our database also contains a method `public Stream<Integer> getFavouriteNumbers(String friendsName)`.
+
+...
