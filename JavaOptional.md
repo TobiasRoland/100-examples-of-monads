@@ -116,7 +116,7 @@ We don't really want to keep checking for presence and that stuff.
 Optional<String> maybeSteve = database.findSteve();
     if (maybeSteve.isPresent()) {
     Optional<String> maybeJob = database.findJob("Steve");
-    if (mayeJob.isPresent()) {
+    if (maybeJob.isPresent()) {
         String job = maybeJob.get();
         Optional<Double> maybeSalary = database.findSalary(job);
         if (maybeSalary.isPresent()) {
