@@ -251,11 +251,14 @@ Stream<Friend> friends = kids.flatMap(kid -> kid.getFriends());
 Stream<Character> characters = friends.flatMap(friend -> this.convertFriendToChars(friend));
 characters.forEach(character -> System.out.printLn("char: " + character));
 ```
-That's pretty much it for `.flatMap`. As a convenience, we can use a differnet syntax to avoid having to
-write out `flatMap(parameter -> parameter.getSomeValue())`. This: `.flatMap(Parameter::getSomeValue)`
-is just as good, if not better! If you do that and chain your calls, we can make the above look pretty
-consise, but note that we're NOT loosing any information - all the information is still here, just less
-verbose. Most people come to like this way of writing it after using streams:
+That's pretty much it for `.flatMap`. As a convenience, we can use a simpler syntax to avoid having to
+write out `flatMap(parameter -> parameter.getSomeValue())` every time we just want to use the parameter:
+
+* `.flatMap(Parameter::getSomeValue)` is the same as `flatMap(parameter -> parameter.getSomeValue())`
+* `.flatMap(Service::getSomeValueWithParameter)` is the same as `flatMap(parameter -> service.getSomeValueWithParameter(parameter)`
+
+Less letters, more good? It's a matter of preference (mostly), but if you do that and chain your calls, we can make the above look pretty consise. but note that we're NOT loosing any information - all the information is still here, just less
+verbose. Most people come to like this way of writing it after using streams for a while.
 
 ```
 lookupParents
