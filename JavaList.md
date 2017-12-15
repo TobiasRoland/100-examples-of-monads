@@ -223,13 +223,13 @@ Note our use of the `java.util.Function.identity` that we learned about in the S
 ```Java
     .map(Owner::getPets)
     .map(List::stream)
-    .flatMap(java.util.Function.identity())
+    .flatMap(identity())
     .map(Pet::getFavouriteToys)
     .map(List::stream)
-    .flatMap(java.util.Function.identity())
+    .flatMap(identity())
     .map(Toy::getColors)
     .map(List::stream)
-    .flatMap(java.util.Function.identity())
+    .flatMap(identity())
     .forEach(...);
 ```
 can be expanded to:
@@ -247,7 +247,7 @@ Stream<Stream<Toy>> toyStreams = toyLists.flatMap(toyList -> toyList.stream());
 Stream<Toy> toys               = toyStreams.flatMap(toyStream -> toyStream);
 
 Stream<List<String>> colorLists    = toys.map(toy -> toy.getColors());
-Stream<Stream<String> colorStreams = colorLists.map(colorList -> colorList.stream());
+Stream<Stream<String>> colorStreams = colorLists.map(colorList -> colorList.stream());
 Stream<String> colors              = colorStreams.flatMap(color -> color);
 
 colors.forEach(...);
