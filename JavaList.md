@@ -215,3 +215,36 @@ colors.forEach(...);
 
 Note how we're "flattening" every list into just it's elements!
 
+## A really quite silly example
+Here's another interesting example that will (just like the examples above) be equivalent to our original example. Really, this is just a bit silly. Still, if you're having trouble understanding the examples, I storngly suggest you try to really read and understand this example thoroughly.
+
+Note our use of the `java.util.Function.identity` that we learned about in the Streams section!
+
+```Java
+    .map(Owner::getPets)
+    .map(List::stream)
+    .flatMap(java.util.Function.identity())
+    .map(Pet::getFavouriteToys)
+    .map(List::stream)
+    .flatMap(java.util.Function.identity())
+    .map(Toy::getColors)
+    .map(List::stream)
+    .flatMap(java.util.Function.identity())
+    .forEach(...);
+```
+can be expanded to:
+
+```Java
+Stream<Owner> ownerStream = owners.stream();
+Stream<List<Pet>> petLists = ownerStream.map(owner -> owner.getPets());
+Stream<Stream<Pet>> petStreams = petLists.map(list -> list.stream());
+Stream<Pet> pets = petStreams.flatMap(petStream -> petStream);
+Stream<List<Toy>> toyLists = pets.map(pet -> pet.getFavouriteToys());
+Stream<Stream<Toy>> toyStreams = toyLists.flatMap(toyList -> toyList.stream());
+Stream<Toy> toys = toyStreams.flatMap(toyStream -> toyStream);
+Stream<List<String>> colorLists = toys.map(toy -> toy.getColors());
+Stream<Stream<String> colorStreams = colorLists.map(colorList -> colorList.stream());
+Stream<String> colors = colorStreams.flatMap(color -> color);
+colors.forEach(...);
+```
+See how that `.map` doesn't change the nesting initially? Only `.flatMap` changes the nesting! 
