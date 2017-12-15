@@ -2,13 +2,12 @@
 
 If you've read the previous pages, you might be thinking to yourself:
 
-> Wow. Neat. But wouldn't it be nice if we were able to, say, `.flatMap` on a List of List<String>? 
-I mean.. that seems like a very similar thing
+> "OK, Streams seem neat, it's all about being able to get rid of nesting, then? OK. But... wouldn't it be nice if we were able to, say, `.flatMap` on other nested structures, like... `List<List<String>>? I mean.. that seems like a very similar thing?"
 
 Yes, that would be very useful! But... you can't. Not directly. But you CAN convert a `List<String>` to a `Stream<String>`
 pretty easily. 
 
-> Oh that sounds useful. Is it?
+> "Oh that sounds useful!"
 
 Yes, very!
 
@@ -35,7 +34,7 @@ Maybe... maybe we can use the fact that we can convert a List into a stream?
 
 ## Step 0: How do I create one?
 
-Then you could (hint: this gets better later down, trust me), in turn, convert each list to a stream:
+You _could_ (hint: there's a better aproach below) convert each list to a stream, and then create a Stream of those Streams
 ```Java
 Stream<String> streamOfCats = listOfCats.stream();
 Stream<String> streamOfDogs = listOfDogs.stream();
@@ -49,7 +48,7 @@ Stream<Stream<String>> streamOfAllStreamsOfPets = Stream.of(streamOfCats, stream
 Stream<String> streamOfAllPets = streamOfAllStreamsOfPets.flatMap(petStream -> petStream);
 streamOfAllPets.forEach(pet -> System.out.println(pet + " is a cute pet"));
 ```
-Which will print something like:
+Which will print:
 
 ```
 Mittens is a cute pet
@@ -62,15 +61,31 @@ Sniffles is a cute pet
 Buttercup is a cute pet
 ```
 
-But that seems like a lot of work, look at all those similar lines and assignments of lists to variables. 
-Maybe we can be a little more clever about it?
+You could also go
+```Java
+Stream<List<String>> streamOfLists = listsOfPets.stream();
+streamOfLists.forEach(listOfNames -> {
+    listOfNames.forEach(petName -> {
+        System.out.println(petName + " is a cute pet));
+    });
+});
+```
 
-## Step 1: Stream your lists and then flatmap them
-Let's assume all our pets come from a database that has the following method:
+But both of those don't seems like they're super elegant. Look at all those similar lines and assignments in the first example, and look at those multiple `.forEach`es in the second example.  
+Maybe we can be a little more clever about it... maybe... maybe we could use... `Stream`?
+
+## Step 1: Stream your lists and flatMap them
+We can't change how we get our data initially, unfortunately. We get it from a database, and that database only has this method:
 
 ```Java
 public List<List<String>> getMultipleListsWithPetNames();
 ```
+
+This is OK though. Because we know two things that will make our lives easier.
+1) **We can convert a List to a Stream using the `.stream()` method**
+2) **.flatMap` operates on a stream, and takes a function that returns a new stream, and "flattens" the new streams**
+
+Armed with this superior knowledge, we can now get the pet names like this:
 
 ```Java
 List<List<String>> listOfListOfNames = getMultipleListsWithPetNames();
@@ -79,9 +94,11 @@ listOfListOfNames.stream()
     .forEach(petName -> System.out.println(petName + " is a cute pet"));
 
 ```
-That's pretty neat, isn't it? 
+See how we allowed the `.flatMap` to take the inner list of `listOfListOfNames`, `petNameList`, and then convert that to a Stream? Pretty neat. But let's try with a slightly more object oriented example and a few more layers of nesting and see if we can get a feel for it.
 
-Let's try a more objectOriented example and see if we can make it clearer. Let's say we have these classes:
+
+## Step 1.5 - A more Object Oriented example
+Let's try a more object oriented example and see if we can make it clearer.  Let's say we have three classes:
 
 ```Java
 public class Owner {
@@ -109,18 +126,86 @@ List<Owner> owners = getOwners();
 
 How would we print every color? 
 
-Since Streams were so successful before, let's try again:
+Well, since Streams were so successful before, let's try again.
+
+```Java
+List<Owner> owners = ...;
+Stream<Pet> pets = owners.flatMap(owner -> owner.getPets().stream());
+Stream<Toy> toys = pets.flatMap(pet -> pet.getToys().stream());
+Stream<String> colors = toys.flatMap(toy -> toy.getColors().stream());
 
 ```
+
+Rewriting that without reassigning to variables:
+```Java
 owners.stream()
     .flatMap(owner -> owner.getPets().stream())
     .flatMap(pet -> pet.getFavouriteToys().stream())
     .flatMap(toy -> toy.getColors().stream())
     .forEach(color -> System.out.println(color));
 ```
-Wow! That's pretty consise!
 
-It would be lovely if we could just go `.flatMap(owner -> owner.getPets)`, but unfortunately, we can't convert automatically
-from `List` to `Stream` - the Stream's `.flatMap` can only flatMap one stream to another!
+Very consise. We convert each list to a Stream, and "flatten" all of the streams!
 
-# TODO: IN PROGRESS 
+It would be lovely if we could just go `.flatMap(owner -> owner.getPets())`, but unfortunately, we can't convert automatically
+from `List` to `Stream` - the Stream's `.flatMap` can only flatMap one Stream to another Stream!
+
+## 2: Map and FlatMap used together
+I'm trying not to explain everything about Streams, but you should get yourself familiarized with the `.map()` function as well. 
+
+Remember this: 
+* If the function you're trying to use returns a String, use `.map`
+* If the functoin you're trying to use returns a Stream<String>, use `.flatMap`
+
+Because of this, you'll sometimes see people using a `.map` followed by a `flatMap` which might initially seem confusing:
+
+```Java
+owners.stream()
+    .map(Owner::getPets)
+    .flatMap(Collection::stream)
+    .map(Pet::getFavouriteToys)
+    .flatMap(Collection::stream)
+    .map(Toy::getColors)
+    .flatMap(Collection::stream)
+    .forEach(...);
+```
+Whoa! What's the deal with `Collection`, first of all? Well, it's just because `.flatMap` is defined on the `Collection` type. You could rewrite that as:
+
+```Java
+owners.stream()
+    .map(Owner::getPets)
+    .flatMap(List::stream)
+    .map(Pet::getFavouriteToys)
+    .flatMap(List::stream)
+    .map(Toy::getColors)
+    .flatMap(List::stream)
+    .forEach(...);
+```
+Maybe still a little hard to parse if you're not used to the syntax. So let's use our excellent knowledge of method references (`::`), and expand that to:
+
+```Java
+owners.stream()
+    .map(owner -> getPets())
+    .flatMap(petList -> petList.stream())
+    .map(pet -> pet.getToys())
+    .flatMap(toyList -> toyList.stream())
+    .map(toy -> toy.getColors())
+    .flatMap(colorList -> colorList.stream())
+    .forEach(...);
+```
+And now it looks less scary. If we assign each step to a variable, it should hopefully become apparent exactly what
+is changing in the "innards" of the Stream:
+
+```Java
+Stream<Owner> ownerStream = owners.stream();
+Stream<List<Pet>> petLists = ownerStream.map(owner -> owner.getPets());
+Stream<Pet> pets = petLists.flatMap(list -> list.stream());
+Stream<List<Toy>> toyLists = pets.map(pet -> pet.getFavouriteToys());
+Stream<Toy> toys = toyLists.flatMap(toyList -> toyList.stream());
+Stream<List<String>> colorLists = toys.map(toy -> toy.getColors());
+Stream<String> colors = colors.flatMap(color -> color.stream());
+colors.forEach(...);
+```
+
+Note how we're "flattening" every list into just it's elements!
+
