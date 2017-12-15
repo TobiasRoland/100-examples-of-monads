@@ -2,7 +2,7 @@
 
 If you've read the previous pages, you might be thinking to yourself:
 
-> "OK, Streams seem neat, it's all about being able to get rid of nesting, then? OK. But... wouldn't it be nice if we were able to, say, `.flatMap` on other nested structures, like... `List<List<String>>? I mean.. that seems like a very similar thing?"
+> "OK, Streams seem neat, it's all about being able to get rid of nesting, then? OK. But... wouldn't it be nice if we were able to, say, `.flatMap` on other nested structures, like... `List<List<String>>`? I mean.. that seems like a very similar thing?"
 
 Yes, that would be very useful! But... you can't. Not directly. But you CAN convert a `List<String>` to a `Stream<String>`
 pretty easily. 
