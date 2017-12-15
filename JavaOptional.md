@@ -190,7 +190,7 @@ database.findSteve()
 
 It's (mostly) a matter of preference. I personally favor the `::` syntax over the lambda syntax. 
 
-## Step 3: flatMap applies applies a function that returns a wrapped value to the original wrapped value 
+## Step 3: flatMap applies a function that returns a wrapped value to the original wrapped value 
 No no no, stop stop, I hear you. That sentence was... intense. Let's try it again.
 
 With `.flatMap` you're `Applying a function that returns a wrapped value, to a wrapped value`. Say it with me. `Applying a function that returns a wrapped value, to a wrapped value`. Again!
