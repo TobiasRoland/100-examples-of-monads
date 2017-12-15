@@ -151,13 +151,19 @@ It would be lovely if we could just go `.flatMap(owner -> owner.getPets())`, but
 from `List` to `Stream` - the Stream's `.flatMap` can only flatMap one Stream to another Stream!
 
 ## 2: Map and FlatMap used together
-I'm trying not to explain everything about Streams, but you should get yourself familiarized with the `.map()` function as well. 
+I'm trying not to explain everything about Streams, but you should get yourself familiarized with the `.map()` function as well. It takes a function that operates on the element of the `Stream`, and returns a transformed element that ISN'T wrapped in a stream. So in example, let's say you have two methods:}
 
-Remember this: 
-* If the function you're trying to use returns a String, use `.map`
-* If the functoin you're trying to use returns a Stream<String>, use `.flatMap`
+```Java
+public String toUpperCase(String str);
+public Stream<String> getThreeCopiesOf(String str);
+```
+Then you'd use `.map` for the naked `String` and `.flatMap` for the `Stream<String>`. Easy peasy.
 
-Because of this, you'll sometimes see people using a `.map` followed by a `flatMap` which might initially seem confusing:
+If in doubt, consider:  
+* If the function you're trying to use returns a naked element, use `.map`
+* If the function you're trying to use returns a wrapped element, use `.flatMap`
+
+As a side effect of those two sentences, you'll sometimes see people using a `.map` followed by a `flatMap` which might initially seem confusing, but don't panic! We'll get through this.
 
 ```Java
 owners.stream()
@@ -169,7 +175,7 @@ owners.stream()
     .flatMap(Collection::stream)
     .forEach(...);
 ```
-Whoa! What's the deal with `Collection`, first of all? Well, it's just because `.flatMap` is defined on the `Collection` type. You could rewrite that as:
+Whoa! What's the deal with `Collection`, first of all? Well, it's just because `.stream()` is defined on the `Collection` interface, and `List` implements `Collection`. So... you could rewrite that as:
 
 ```Java
 owners.stream()
