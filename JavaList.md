@@ -243,7 +243,7 @@ Stream<Stream<Pet>> petStreams = petLists.map(list -> list.stream());
 Stream<Pet> pets               = petStreams.flatMap(petStream -> petStream);
 
 Stream<List<Toy>> toyLists     = pets.map(pet -> pet.getFavouriteToys());
-Stream<Stream<Toy>> toyStreams = toyLists.flatMap(toyList -> toyList.stream());
+Stream<Stream<Toy>> toyStreams = toyLists.map(toyList -> toyList.stream());
 Stream<Toy> toys               = toyStreams.flatMap(toyStream -> toyStream);
 
 Stream<List<String>> colorLists     = toys.map(toy -> toy.getColors());
