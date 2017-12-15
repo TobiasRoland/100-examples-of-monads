@@ -42,7 +42,7 @@ Stream<String> streamOfRabbits = listOfRabbits.stream();
 Stream<Stream<String>> streamOfAllStreamsOfPets = Stream.of(streamOfCats, streamOfDogs, streamOfRabbits);
 ```
 
-So now we're rid of the List interface, and we could work on them just as we did in the (Java Streams)[javaStream.md] example:
+So now we're rid of the List interface, and we could work on them just as we did in the [Java Streams](javaStream.md) example:
 ```Java
 Stream<Stream<String>> streamOfAllStreamsOfPets = Stream.of(streamOfCats, streamOfDogs, streamOfRabbits);
 Stream<String> streamOfAllPets = streamOfAllStreamsOfPets.flatMap(petStream -> petStream);
