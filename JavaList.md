@@ -97,8 +97,8 @@ listOfListOfNames.stream()
 See how we allowed the `.flatMap` to take the inner list of `listOfListOfNames`, `petNameList`, and then convert that to a Stream? Pretty neat. But let's try with a slightly more object oriented example and a few more layers of nesting and see if we can get a feel for it.
 
 
-## Step 1.5 - A more Object Oriented example
-Let's try a more object oriented example and see if we can make it clearer.  Let's say we have three classes:
+### A more Object Oriented example of `.flatMap`ping lists
+Let's say we have three classes:
 
 ```Java
 public class Owner {
@@ -215,8 +215,8 @@ colors.forEach(...);
 
 Note how we're "flattening" every list into just it's elements!
 
-## A really quite silly example
-Here's another interesting example that will (just like the examples above) be equivalent to our original example. Really, this is just a bit silly. Still, if you're having trouble understanding the examples, I storngly suggest you try to really read and understand this example thoroughly.
+### A really quite silly example
+Here's another interesting example that will (just like the examples above) be equivalent to our original example. Really, this is just a bit silly. Still, if you're having trouble understanding the examples, I urge  you try to _really_, **Thoroughly**  read and understand this example thoroughly.
 
 Note our use of the `java.util.Function.identity` that we learned about in the Streams section!
 
