@@ -34,5 +34,6 @@ forms and (if time and enthusiasm permits) multiple languages!
 
 
 **IN PROGRESS:**
-[Java Optional](JavaOptional.md) (80% done)
-[Java Stream](JavaStream.md) (70% done)
+1) [Java Optional](JavaOptional.md) (80% done)
+2) [Java Stream](JavaStream.md) (70% done)
+3) [Java List](JavaList.md) (90% done)
